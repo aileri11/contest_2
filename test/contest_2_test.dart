@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:test/test.dart';
 
 int divisitorsSum(int number){
@@ -71,6 +73,42 @@ num solveExpression(String expr){
     exprList.removeAt(0);
   }
   exprList = destroyMultipleSigns(exprList);
+  for(int i = 1; i < exprList.length; i++){
+    if(exprList[i - 1] != '+' && exprList[i - 1] != '-' && exprList[i - 1] != ''){
+      if(exprList[i] == '/'){
+        if(exprList[i + 1] == '-'){
+          exprList[i] = (num.parse(exprList[i - 1]) / - num.parse(exprList[i + 2])).toString();
+          exprList.removeAt(i+2);
+        }
+        else if(exprList[i + 1] == '+'){
+          exprList[i] = (num.parse(exprList[i - 1]) / num.parse(exprList[i + 2])).toString();
+          exprList.removeAt(i+2);
+        }
+        else{
+          exprList[i] = (num.parse(exprList[i - 1]) / num.parse(exprList[i + 1])).toString();
+        }
+        exprList.removeAt(i+1);
+        exprList.removeAt(i-1);
+        i = i - 1;
+      }
+      else if(exprList[i] == '*'){
+        if(exprList[i + 1] == '-'){
+          exprList[i] = (num.parse(exprList[i - 1]) * - num.parse(exprList[i + 2])).toString();
+          exprList.removeAt(i+2);
+        }
+        else if(exprList[i + 1] == '+'){
+          exprList[i] = (num.parse(exprList[i - 1]) * num.parse(exprList[i + 2])).toString();
+          exprList.removeAt(i+2);
+        }
+        else{
+          exprList[i] = (num.parse(exprList[i - 1]) * num.parse(exprList[i + 1])).toString();
+        }
+        exprList.removeAt(i+1);
+        exprList.removeAt(i-1);
+        i = i - 1;
+      }
+    }
+  }
   num sum = getFirstNum(exprList);
   for(int i = 1; i < exprList.length; i++){
     if(exprList[i - 1] != '+' && exprList[i - 1] != '-' && exprList[i - 1] != ''){
@@ -80,28 +118,6 @@ num solveExpression(String expr){
         }
         if(exprList[i] == '-'){
           sum = sum - num.parse(exprList[i+1]);
-        }
-      }
-      if(exprList[i] == '/'){
-        if(exprList[i + 1] == '-'){
-          sum = sum / -num.parse(exprList[i+2]);
-        }
-        else if(exprList[i + 1] == '+'){
-          sum = sum / num.parse(exprList[i+2]);
-        }
-        else{
-          sum = sum / num.parse(exprList[i+1]);
-        }
-      }
-      if(exprList[i] == '*'){
-        if(exprList[i + 1] == '-'){
-          sum = sum * -num.parse(exprList[i+2]);
-        }
-        else if(exprList[i + 1] == '+'){
-          sum = sum * num.parse(exprList[i+2]);
-        }
-        else{
-          sum = sum * num.parse(exprList[i+1]);
         }
       }
     }
@@ -153,7 +169,7 @@ void main() {
     print(openBrackets(test));
   });
   test('expression test', () {
-    String test = '(2 / (2 + 3.33) * 4) - -6';
+    String test = '2 / 2 + 3.33 * 4 - -6';
     print(solveExpression(openBrackets(test)));
   });
   test('isValid?', () {
